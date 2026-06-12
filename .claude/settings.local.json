@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --version)",
+      "Bash(pnpm install *)",
+      "Bash(sudo pnpm install)",
+      "Bash(rm -f pnpm-workspace.yaml turbo.json package.json pnpm-lock.yaml .npmrc .prettierrc .gitignore)",
+      "Bash(rm -rf node_modules .turbo)",
+      "Bash(rm -f *.id)",
+      "Bash(mkdir -p \"/mnt/d/Book Summary/book-summary-api/src/domain/source/entities/__tests__\")",
+      "Bash(mkdir -p \"/mnt/d/Book Summary/book-summary-api/src/domain/concept/entities/__tests__\")",
+      "Bash(mkdir -p \"/mnt/d/Book Summary/book-summary-api/src/domain/artifact/entities/__tests__\")",
+      "Bash(mkdir -p \"/mnt/d/Book Summary/book-summary-api/src/domain/mastery/entities/__tests__\")",
+      "Bash(mkdir -p \"/mnt/d/Book Summary/book-summary-api/src/domain/user/entities/__tests__\")",
+      "Bash(pnpm test *)",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\(json.dumps\\(p.get\\('devDependencies',{}\\), indent=2\\)\\)\")",
+      "Bash(ls node_modules/ts-jest/dist/preprocessor)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/ts-jest/package.json'\\).version\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(./node_modules/.bin/jest --version)",
+      "Bash(./node_modules/.bin/jest src/domain/source/entities/__tests__/source.entity.spec.ts --no-coverage)",
+      "Bash(ls node_modules/.bin/ts-jest)",
+      "Bash(node -e \"require\\('ts-jest'\\); console.log\\('ts-jest loads ok'\\)\")",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('main:', p.get\\('main'\\)\\); print\\('exports:', list\\(p.get\\('exports', {}\\).keys\\(\\)\\)[:5]\\)\")",
+      "Bash(NODE_PATH=./node_modules ./node_modules/.bin/jest src/domain/source/entities/__tests__/source.entity.spec.ts --no-coverage)",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('main:', p.get\\('main','NOT SET'\\)\\); print\\('name:', p.get\\('name'\\)\\); print\\('version:', p.get\\('version'\\)\\)\")",
+      "Bash(node -e \"const {default: resolver} = require\\('./node_modules/jest-resolve'\\); console.log\\('resolver:', typeof resolver\\)\")",
+      "Bash(./node_modules/.bin/jest --showConfig)",
+      "Bash(node --require \"/mnt/d/Book Summary/book-summary-api/node_modules/ts-jest\" -e \"console.log\\('ok'\\)\")",
+      "Bash(node_modules/.bin/jest --version)",
+      "Bash(node -e \"console.log\\(require.resolve\\('./node_modules/.bin/jest'\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('version:', p['version']\\); print\\('main:', p.get\\('main','NOT SET'\\)\\)\")",
+      "Bash(kill %1)",
+      "Bash(node *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm -C \"/mnt/d/Book Summary/book-summary-api\" exec jest --version)",
+      "Bash(pnpm exec *)",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('types:', p.get\\('types'\\)\\); print\\('exports:', list\\(p.get\\('exports',{}\\).keys\\(\\)\\)[:5]\\)\")",
+      "Bash(pnpm build *)",
+      "Bash(echo \"EXIT:$?\")"
+    ]
+  }
+}

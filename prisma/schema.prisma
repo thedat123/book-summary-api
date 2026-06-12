@@ -1,0 +1,223 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DB")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum SourceType {
+  WEB
+  API
+  PDF
+  BOOK
+}
+
+enum SourceStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum ArtifactType {
+  SUMMARY
+  FLASHCARD_SET
+  QUIZ_SET
+  LEARNING_PATH
+}
+
+enum ConceptRelationType {
+  DEPENDS_ON
+  USES
+  PART_OF
+  RELATED_TO
+}
+
+enum JobType {
+  EXTRACT_CONCEPTS
+  GENERATE_ARTIFACT
+  GENERATE_ASSESSMENT
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String    @unique @db.VarChar
+  name      String?   @db.VarChar
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  sources            Source[]
+  assessmentAttempts AssessmentAttempt[]
+  masteries          LearnerConceptMastery[]
+
+  @@map("users")
+}
+
+model Source {
+  id         String       @id @default(uuid()) @db.Uuid
+  ownerId    String       @map("owner_id") @db.Uuid
+  title      String       @db.Text
+  sourceType SourceType   @map("source_type")
+  sourceUrl  String?      @map("source_url") @db.Text
+  status     SourceStatus
+  aiSnapshot Json?        @map("ai_snapshot") @db.JsonB
+  createdAt  DateTime?    @default(now()) @map("created_at") @db.Timestamptz
+
+  owner       User         @relation(fields: [ownerId], references: [id])
+  concepts    Concept[]
+  artifacts   Artifact[]
+  assessments Assessment[]
+  jobs        Job[]
+
+  @@map("sources")
+}
+
+model Concept {
+  id              String    @id @default(uuid()) @db.Uuid
+  sourceId        String    @map("source_id") @db.Uuid
+  name            String    @db.Text
+  description     String    @db.Text
+  importanceScore Decimal?  @map("importance_score") @db.Decimal
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  source    Source    @relation(fields: [sourceId], references: [id])
+  questions Question[]
+  masteries LearnerConceptMastery[]
+
+  sourceRelations ConceptRelation[] @relation("SourceConcept")
+  targetRelations ConceptRelation[] @relation("TargetConcept")
+
+  @@map("concepts")
+}
+
+model ConceptRelation {
+  id              String              @id @default(uuid()) @db.Uuid
+  sourceConceptId String              @map("source_concept_id") @db.Uuid
+  targetConceptId String              @map("target_concept_id") @db.Uuid
+  relationType    ConceptRelationType @map("relation_type")
+  createdAt       DateTime?           @default(now()) @map("created_at") @db.Timestamptz
+
+  sourceConcept Concept @relation("SourceConcept", fields: [sourceConceptId], references: [id])
+  targetConcept Concept @relation("TargetConcept", fields: [targetConceptId], references: [id])
+
+  @@map("concept_relations")
+}
+
+model Artifact {
+  id        String       @id @default(uuid()) @db.Uuid
+  sourceId  String       @map("source_id") @db.Uuid
+  type      ArtifactType
+  content   Json         @db.JsonB
+  createdAt DateTime?    @default(now()) @map("created_at") @db.Timestamptz
+
+  source Source @relation(fields: [sourceId], references: [id])
+
+  @@map("artifacts")
+}
+
+model Assessment {
+  id        String    @id @default(uuid()) @db.Uuid
+  sourceId  String    @map("source_id") @db.Uuid
+  title     String?   @db.Text
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  source    Source              @relation(fields: [sourceId], references: [id])
+  questions Question[]
+  attempts  AssessmentAttempt[]
+
+  @@map("assessments")
+}
+
+model Question {
+  id           String    @id @default(uuid()) @db.Uuid
+  assessmentId String    @map("assessment_id") @db.Uuid
+  conceptId    String?   @map("concept_id") @db.Uuid
+  body         String    @db.Text
+  explanation  String?   @db.Text
+  difficulty   Int?
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  assessment       Assessment       @relation(fields: [assessmentId], references: [id])
+  concept          Concept?         @relation(fields: [conceptId], references: [id])
+  options          QuestionOption[]
+  questionAttempts QuestionAttempt[]
+
+  @@map("questions")
+}
+
+model QuestionOption {
+  id         String   @id @default(uuid()) @db.Uuid
+  questionId String   @map("question_id") @db.Uuid
+  content    String?  @db.Text
+  isCorrect  Boolean? @map("is_correct")
+
+  question         Question          @relation(fields: [questionId], references: [id])
+  questionAttempts QuestionAttempt[]
+
+  @@map("question_options")
+}
+
+model AssessmentAttempt {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  assessmentId String    @map("assessment_id") @db.Uuid
+  score        Decimal?  @db.Decimal
+  submittedAt  DateTime? @map("submitted_at") @db.Timestamptz
+
+  user             User              @relation(fields: [userId], references: [id])
+  assessment       Assessment        @relation(fields: [assessmentId], references: [id])
+  questionAttempts QuestionAttempt[]
+
+  @@map("assessment_attempts")
+}
+
+model QuestionAttempt {
+  id                  String   @id @default(uuid()) @db.Uuid
+  assessmentAttemptId String   @map("assessment_attempt_id") @db.Uuid
+  questionId          String   @map("question_id") @db.Uuid
+  selectedOptionId    String?  @map("selected_option_id") @db.Uuid
+  isCorrect           Boolean? @map("is_correct")
+
+  assessmentAttempt AssessmentAttempt @relation(fields: [assessmentAttemptId], references: [id])
+  question          Question          @relation(fields: [questionId], references: [id])
+  selectedOption    QuestionOption?   @relation(fields: [selectedOptionId], references: [id])
+
+  @@map("question_attempts")
+}
+
+model LearnerConceptMastery {
+  userId       String    @map("user_id") @db.Uuid
+  conceptId    String    @map("concept_id") @db.Uuid
+  masteryScore Decimal?  @map("mastery_score") @db.Decimal
+  updatedAt    DateTime? @map("updated_at") @db.Timestamptz
+
+  user    User    @relation(fields: [userId], references: [id])
+  concept Concept @relation(fields: [conceptId], references: [id])
+
+  @@id([userId, conceptId])
+  @@map("learner_concept_mastery")
+}
+
+model Job {
+  id           String    @id @default(uuid()) @db.Uuid
+  sourceId     String    @map("source_id") @db.Uuid
+  type         JobType
+  status       JobStatus
+  errorMessage String?   @map("error_message") @db.Text
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  source Source @relation(fields: [sourceId], references: [id])
+
+  @@map("jobs")
+}

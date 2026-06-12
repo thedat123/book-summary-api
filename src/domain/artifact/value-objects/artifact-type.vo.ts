@@ -1,0 +1,6 @@
+export enum ArtifactType {
+  SUMMARY = 'SUMMARY',
+  FLASHCARD_SET = 'FLASHCARD_SET',
+  QUIZ_SET = 'QUIZ_SET',
+  LEARNING_PATH = 'LEARNING_PATH',
+}
