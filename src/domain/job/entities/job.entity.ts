@@ -12,32 +12,26 @@ export class Job {
   ) {}
 
   isPending(): boolean {
-    // TODO: status === JobStatus.PENDING
-    throw new Error('Not implemented');
+    return this.status === JobStatus.PENDING;
   }
 
   isRunning(): boolean {
-    // TODO: status === JobStatus.RUNNING
-    throw new Error('Not implemented');
+    return this.status === JobStatus.RUNNING;
   }
 
   isCompleted(): boolean {
-    // TODO: status === JobStatus.COMPLETED
-    throw new Error('Not implemented');
+    return this.status === JobStatus.COMPLETED;
   }
 
   hasFailed(): boolean {
-    // TODO: status === JobStatus.FAILED
-    throw new Error('Not implemented');
+    return this.status === JobStatus.FAILED;
   }
 
   isTerminal(): boolean {
-    // TODO: true when status is COMPLETED or FAILED (no further transitions)
-    throw new Error('Not implemented');
+    return this.isCompleted() || this.hasFailed()
   }
 
   canRetry(): boolean {
-    // TODO: only FAILED jobs can be retried — delegate to hasFailed()
-    throw new Error('Not implemented');
+    return this.hasFailed()
   }
 }

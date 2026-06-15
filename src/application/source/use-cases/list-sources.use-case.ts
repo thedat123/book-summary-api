@@ -2,7 +2,8 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ISourceRepository } from '@domain/source/repositories/source.repository.interface';
 import { INJECTION_TOKENS } from '@infrastructure/di/injection-tokens';
 import { ListSourcesDto } from '../dtos/create-source.dto';
-import { PaginatedSourcesResponseDto } from '../dtos/source-response.dto';
+import { PaginatedSourcesResponseDto, SourceResponseDto } from '../dtos/source-response.dto';
+import { Source } from '@domain/source/entities/source.entity';
 
 /**
  * ListSourcesUseCase
@@ -30,14 +31,30 @@ export class ListSourcesUseCase {
   ) {}
 
   async execute(ownerId: string, dto: ListSourcesDto): Promise<PaginatedSourcesResponseDto> {
-    // TODO: resolve limit and offset with defaults (20 / 0)
-    // TODO: const [sources, total] = await Promise.all([findByOwnerId(...), countByOwnerId(...)])
-    // TODO: return { items: sources.map(s => this.toDto(s)), total, limit, offset }
-    throw new Error('Not implemented');
+    const limit = dto.limit ?? 20;
+    const offset = dto.offset ?? 0;
+    const [sources, total] = await Promise.all([
+      this.sourceRepository.findByOwnerId(ownerId, { limit, offset }),
+      this.sourceRepository.countByOwnerId(ownerId),
+    ]);
+    return {
+      items: sources.map(s => this.toDto(s)),
+      total,
+      limit,
+      offset,
+    };
   }
 
-  private toDto(source: any): any {
-    // TODO: return { id, ownerId, title, sourceType, sourceUrl, status, aiSnapshot, createdAt }
-    throw new Error('Not implemented');
+  private toDto(source: Source): SourceResponseDto {
+    return {
+      id: source.id,
+      ownerId: source.ownerId,
+      title: source.title,
+      sourceType: source.sourceType,
+      sourceUrl: source.sourceUrl,
+      status: source.status,
+      aiSnapshot: source.aiSnapshot,
+      createdAt: source.createdAt,
+    };
   }
 }

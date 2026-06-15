@@ -1,7 +1,8 @@
+import { AssessmentStatus } from '@domain/assessment/value-objects/assessment-status.vo';
 import { Assessment } from '../assessment.entity';
 
 const makeAssessment = (title: string | null) =>
-  new Assessment('assess-1', 'source-1', title, new Date());
+  new Assessment('assess-1', 'source-1', title, new Date(), AssessmentStatus.IN_PROGRESS);
 
 describe('Assessment entity', () => {
   describe('hasTitle()', () => {

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { ISourceRepository } from '@domain/source/repositories/source.repository.interface';
 import { INJECTION_TOKENS } from '@infrastructure/di/injection-tokens';
 import { SourceResponseDto } from '../dtos/source-response.dto';
@@ -29,14 +29,30 @@ export class GetSourceUseCase {
   ) {}
 
   async execute(sourceId: string, requestingUserId: string): Promise<SourceResponseDto> {
-    // TODO: find source by id, throw NotFoundException if null
-    // TODO: check source.belongsToUser(requestingUserId), throw ForbiddenException if false
-    // TODO: return this.toDto(source)
-    throw new Error('Not implemented');
+    const source = await this.sourceRepository.findById(sourceId);
+    if (!source) {
+      // 404 instead of 403 to avoid leaking whether a source exists at all
+      throw new NotFoundException(`Source ${sourceId} not found`);
+    }
+    if (!source.belongsToUser(requestingUserId)) {
+      // Use ForbiddenException rather than UnauthorizedException —
+      // the user IS authenticated, they just don't own this resource
+      throw new ForbiddenException(`User does not own source ${sourceId}`);
+    }
+
+    return this.toDto(source);
   }
 
   private toDto(source: any): SourceResponseDto {
-    // TODO: return { id, ownerId, title, sourceType, sourceUrl, status, aiSnapshot, createdAt }
-    throw new Error('Not implemented');
+    return {
+      id: source.id,
+      ownerId: source.ownerId,
+      title: source.title,
+      sourceType: source.sourceType,
+      sourceUrl: source.sourceUrl,
+      status: source.status,
+      aiSnapshot: source.aiSnapshot,
+      createdAt: source.createdAt,
+    };
   }
 }

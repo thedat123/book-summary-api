@@ -12,22 +12,18 @@ export class Artifact {
   ) {}
 
   isSummary(): boolean {
-    // TODO: type === ArtifactType.SUMMARY
-    throw new Error('Not implemented');
+    return this.type === ArtifactType.SUMMARY;
   }
 
   isFlashcardSet(): boolean {
-    // TODO: type === ArtifactType.FLASHCARD_SET
-    throw new Error('Not implemented');
+    return this.type === ArtifactType.FLASHCARD_SET;
   }
 
   isQuizSet(): boolean {
-    // TODO: type === ArtifactType.QUIZ_SET
-    throw new Error('Not implemented');
+    return this.type === ArtifactType.QUIZ_SET;
   }
 
   isLearningPath(): boolean {
-    // TODO: type === ArtifactType.LEARNING_PATH
-    throw new Error('Not implemented');
+    return this.type === ArtifactType.LEARNING_PATH;
   }
 }

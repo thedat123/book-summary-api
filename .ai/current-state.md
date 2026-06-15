@@ -1,19 +1,18 @@
 # Current State — book-summary-api
 
 ## Project Status
-**Early scaffolding phase.** All architectural structure is in place. Zero business logic is implemented — every method body throws `new Error('Not implemented')`.
+**Active implementation phase.** Core use cases for Source, Concept, and Assessment domains are implemented and tested. Controllers remain partially blocked on Auth (using STUB_USER_ID). Auth is intentionally deferred — see `.ai/auth-guide.md`.
 
 ---
 
-## Completed (Scaffolding)
+## Completed
 
+### Scaffolding
 - [x] Monorepo setup (pnpm workspaces + Turborepo)
 - [x] NestJS app scaffolded with Clean Architecture layer structure
 - [x] Prisma schema fully defined (`prisma/schema.prisma`) — all 12 tables, enums, relations
 - [x] Domain entities defined for all domains (Book, Summary, Quiz, Concept, Assessment, Job, Progress, Mastery, Artifact, Source, User)
 - [x] Repository interfaces defined for all domains
-- [x] All use case classes scaffolded with constructor DI and TODO steps documented
-- [x] All controllers scaffolded with correct routes and Swagger annotations
 - [x] `INJECTION_TOKENS` registry complete for all repositories + services
 - [x] `IAiProvider` interface defined (generateSummary, generateQuiz, extractConcepts, extractTextFromPdf)
 - [x] `IFileStorage` interface defined (upload, download, delete, getSignedUrl)
@@ -21,41 +20,56 @@
 - [x] All Prisma repository stubs created (no query logic implemented)
 - [x] Frontend scaffolded (see `book-summary-web/.ai/current-state.md`)
 
+### Domain Entities (implemented + tested)
+- [x] `source.entity` — all methods implemented and tested
+- [x] `concept.entity`, `concept-relation.entity` — implemented and tested
+- [x] `artifact.entity` — implemented and tested
+- [x] `assessment.entity`, `question.entity`, `question-option.entity` — implemented and tested
+- [x] `assessment-attempt.entity`, `question-attempt.entity` — implemented and tested
+- [x] `learner-concept-mastery.entity` — implemented and tested
+- [x] `user.entity` — basic methods (`hasEmail`, `displayName`) — tested
+- [x] `job.entity` — implemented
+
+### Use Cases (implemented + tested)
+- [x] Source domain: `CreateSourceUseCase`, `GetSourceUseCase`, `ListSourcesUseCase`, `DeleteSourceUseCase`
+- [x] Concept domain: `ExtractConceptsUseCase`, `GetConceptsUseCase`
+- [x] Assessment domain: `CreateAssessmentUseCase`, `SubmitAssessmentUseCase`
+
+### Controllers (scaffolded, partially working)
+- [x] `SourceController` — wired to use cases; uses `STUB_USER_ID` pending auth
+- [x] `AssessmentController` — scaffolded; endpoints throw until auth is wired
+- [x] `ConceptController` — scaffolded; endpoints throw until auth is wired
+
 ---
 
 ## Not Yet Implemented
 
-### Authentication
-- [ ] `AuthModule` — JWT strategy, guards, registration, login endpoints
-- [ ] `JwtAuthGuard` — currently commented out on all controllers
-- [ ] `@CurrentUser()` decorator — userId currently hardcoded as param placeholder
-- [ ] All controllers pass `userId` as TODO placeholder
+### Authentication (intentionally deferred — see `.ai/auth-guide.md`)
+- [ ] `passwordHash` field in `prisma/schema.prisma` User model + migration
+- [ ] `UserPrismaRepository` — `src/infrastructure/persistence/repositories/user.prisma-repository.ts`
+- [ ] `RegisterUseCase`, `LoginUseCase` — `src/application/auth/use-cases/`
+- [ ] Auth DTOs — `src/application/auth/dtos/`
+- [ ] `JwtStrategy` — `src/infrastructure/auth/jwt.strategy.ts`
+- [ ] `JwtAuthGuard` — `src/presentation/guards/jwt-auth.guard.ts`
+- [ ] `@CurrentUser()` decorator — `src/presentation/decorators/current-user.decorator.ts`
+- [ ] `AuthController` — `src/presentation/auth/auth.controller.ts`
+- [ ] Wire `AuthModule` (`src/modules/auth.module.ts`) + import in `app.module.ts`
+- [ ] Remove `STUB_USER_ID` from all controllers; uncomment `@UseGuards(JwtAuthGuard)`
 
 ### Infrastructure
 - [ ] `AiProviderService` — all 4 methods are stubs (no LLM API calls)
 - [ ] `LocalFileStorageService` — all 4 methods are stubs
 - [ ] Prisma repository implementations — all repos return `throw new Error('Not implemented')`
 
-### Use Cases (all domains)
-- [ ] `UploadBookUseCase.execute()`
-- [ ] `GetBookUseCase.execute()`
-- [ ] `ListBooksUseCase.execute()`
-- [ ] `DeleteBookUseCase.execute()`
-- [ ] `GenerateSummaryUseCase.execute()`
-- [ ] `GetSummaryUseCase.execute()`
-- [ ] `GenerateQuizUseCase.execute()`
-- [ ] `SubmitQuizUseCase.execute()`
-- [ ] `ExtractConceptsUseCase.execute()`
-- [ ] `GetConceptsUseCase.execute()`
-- [ ] `CreateAssessmentUseCase.execute()`
-- [ ] `SubmitAssessmentUseCase.execute()`
-- [ ] `TrackProgressUseCase.execute()`
-- [ ] `GetProgressUseCase.execute()`
+### Use Cases (not yet implemented)
+- [ ] Progress domain: `GetProgressUseCase`, `TrackProgressUseCase`
+- [ ] Summary domain: `GetSummaryUseCase`, `GenerateSummaryUseCase`
 
-### Domain Entity Methods
-- [ ] All `Book` entity methods (isReady, isProcessing, hasFailed, canGenerateSummary, canGenerateQuiz, belongsToUser)
-- [ ] All `Job` entity methods (isPending, isRunning, isCompleted, hasFailed, isTerminal, canRetry)
-- [ ] All `Assessment` entity methods (hasTitle, displayTitle)
+### Prisma Repositories (all stubs — no query logic)
+- [ ] `UserPrismaRepository`
+- [ ] `ConceptPrismaRepository`
+- [ ] `AssessmentPrismaRepository` (partial — used by AssessmentModule but queries not confirmed)
+- [ ] `LearnerConceptMasteryPrismaRepository`
 
 ### Application Layer
 - [ ] `apiClient` interceptors — JWT attachment + 401/403 handling
@@ -87,12 +101,9 @@
 
 ## Upcoming Work (Suggested Order)
 
-1. Implement Prisma repositories (data layer first — everything depends on it)
-2. Implement domain entity methods (business rules)
-3. Implement `LocalFileStorageService`
-4. Implement `AiProviderService` (choose OpenAI or Anthropic)
-5. Implement use cases starting with Book domain (Upload → Get → List → Delete)
-6. Implement Summary generation use case
-7. Add `AuthModule` + JWT guards
-8. Implement remaining use cases (Quiz, Concept, Assessment, Progress)
-9. Connect frontend API modules to real endpoints
+1. **Prisma repositories** — implement actual queries in `source.prisma-repository.ts`, `concept.prisma-repository.ts`, `assessment.prisma-repository.ts`, `learner-concept-mastery.prisma-repository.ts`
+2. **Wire controllers** — connect `SourceController` endpoints (list, findOne, remove currently throw)
+3. **Progress domain** — `GetProgressUseCase` + `TrackProgressUseCase`
+4. **AiProviderService** — implement LLM calls (`extractConcepts`, `generateSummary`, etc.)
+5. **Auth** — follow `.ai/auth-guide.md` when userId is needed from a real token
+6. **Summary domain** — `GenerateSummaryUseCase` (depends on AiProviderService)

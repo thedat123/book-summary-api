@@ -37,7 +37,22 @@
       "Bash(pnpm exec *)",
       "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('types:', p.get\\('types'\\)\\); print\\('exports:', list\\(p.get\\('exports',{}\\).keys\\(\\)\\)[:5]\\)\")",
       "Bash(pnpm build *)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(xargs ls -la)",
+      "Bash(npx jest *)",
+      "Bash(npm run *)",
+      "Bash(cat jest.config.js)",
+      "Bash(cat jest.config.ts)",
+      "Bash(node_modules/.bin/jest --runInBand \"submit-assessment.use-case.spec\")",
+      "Bash(npm install *)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(node_modules/.bin/jest --no-coverage --runInBand \"submit-assessment.use-case.spec|create-source.use-case.spec|get-source.use-case.spec|get-concepts.use-case.spec|extract-concepts.use-case.spec\")",
+      "Bash(node_modules/.bin/jest --no-coverage --runInBand)",
+      "Bash(ls node_modules/@unrs/)",
+      "Bash(ls node_modules/ts-jest)",
+      "Bash(pnpm dev *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npx tsc *)"
     ]
   }
 }

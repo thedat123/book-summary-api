@@ -7,25 +7,27 @@ export class LearnerConceptMastery {
   ) {}
 
   isMastered(threshold = 0.8): boolean {
-    // TODO: true when masteryScore !== null AND masteryScore >= threshold
-    throw new Error('Not implemented');
+    return this.masteryScore !== null && this.masteryScore >= threshold;
   }
 
   isNovice(threshold = 0.2): boolean {
-    // TODO: true when masteryScore !== null AND masteryScore < threshold
-    throw new Error('Not implemented');
+    return this.masteryScore !== null && this.masteryScore < threshold;
   }
 
   isUnassessed(): boolean {
-    // TODO: true when masteryScore is null
-    throw new Error('Not implemented');
+    return this.masteryScore === null;
   }
 
   masteryLevel(): 'UNASSESSED' | 'NOVICE' | 'LEARNING' | 'MASTERED' {
-    // TODO: if null → 'UNASSESSED'
-    // TODO: < 0.2  → 'NOVICE'
-    // TODO: < 0.8  → 'LEARNING'
-    // TODO: else   → 'MASTERED'
-    throw new Error('Not implemented');
+    switch (true) {
+      case this.isUnassessed():
+        return 'UNASSESSED';
+      case this.isNovice():
+        return 'NOVICE';
+      case this.isMastered():
+        return 'MASTERED';
+      default:
+        return 'LEARNING';
+    }
   }
 }

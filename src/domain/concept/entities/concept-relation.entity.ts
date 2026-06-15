@@ -10,17 +10,14 @@ export class ConceptRelation {
   ) {}
 
   isDependency(): boolean {
-    // TODO: return true when relationType === ConceptRelationType.DEPENDS_ON
-    throw new Error('Not implemented');
+    return this.relationType === ConceptRelationType.DEPENDS_ON;
   }
 
   isRelated(): boolean {
-    // TODO: return true when relationType === ConceptRelationType.RELATED_TO
-    throw new Error('Not implemented');
+    return this.relationType === ConceptRelationType.RELATED_TO;
   }
 
   isSelfLoop(): boolean {
-    // TODO: return true when sourceConceptId === targetConceptId
-    throw new Error('Not implemented');
+    return this.sourceConceptId === this.targetConceptId;
   }
 }

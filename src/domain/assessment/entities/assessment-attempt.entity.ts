@@ -8,17 +8,14 @@ export class AssessmentAttempt {
   ) {}
 
   isSubmitted(): boolean {
-    // TODO: return true when submittedAt is not null
-    throw new Error('Not implemented');
+    return this.submittedAt !== null;
   }
 
   isPassed(passingThreshold = 70): boolean {
-    // TODO: true when isSubmitted() AND score !== null AND score >= passingThreshold
-    throw new Error('Not implemented');
+    return this.isSubmitted() && this.score !== null && this.score >= passingThreshold;
   }
 
   isInProgress(): boolean {
-    // TODO: return true when submittedAt is null (attempt not yet submitted)
-    throw new Error('Not implemented');
+    return this.submittedAt === null;
   }
 }

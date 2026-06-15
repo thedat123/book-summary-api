@@ -16,36 +16,24 @@ import { ListSourcesUseCase } from '@application/source/use-cases/list-sources.u
 import { DeleteSourceUseCase } from '@application/source/use-cases/delete-source.use-case';
 import { CreateSourceDto, ListSourcesDto } from '@application/source/dtos/create-source.dto';
 import { SourceResponseDto, PaginatedSourcesResponseDto } from '@application/source/dtos/source-response.dto';
+import { CurrentUser } from '@presentation/decorators/current-user.decorator';
 
 /**
  * SourceController — Presentation Layer
  * Route prefix: /sources
  *
- * Auth status: JWT not yet wired. Each action currently uses a stub userId.
- * When auth is ready:
- *   - Add @UseGuards(JwtAuthGuard) to the controller class
- *   - Add @CurrentUser() userId: string to each action parameter
- *   - Remove STUB_USER_ID
+ * Auth status: Using @CurrentUser() with guest fallback (no JWT guard yet).
+ *   - Without JwtAuthGuard: userId = GUEST_USER_ID from current-user.decorator.ts
+ *   - With JwtAuthGuard:    userId = real user from validated JWT token
  *
- * Responsibility per action:
- *   - create()   → delegate to CreateSourceUseCase.execute(dto, userId)
- *   - list()     → delegate to ListSourcesUseCase.execute(userId, dto)
- *   - findOne()  → delegate to GetSourceUseCase.execute(id, userId)
- *   - remove()   → delegate to DeleteSourceUseCase.execute(id, userId)
- *
- * Test cases to write (see __tests__/source.controller.spec.ts):
- *   - create() delegates to CreateSourceUseCase with correct dto and userId
- *   - list() delegates to ListSourcesUseCase with correct userId and query params
- *   - findOne() delegates to GetSourceUseCase with correct id and userId
- *   - remove() delegates to DeleteSourceUseCase with correct id and userId
+ * To activate real auth (when AuthModule is ready — see .ai/auth-guide.md):
+ *   1. Import JwtAuthGuard from '@presentation/guards/jwt-auth.guard'
+ *   2. Uncomment @UseGuards(JwtAuthGuard) below
+ *   3. That's it — @CurrentUser() already reads request.user.userId
  */
-
-// TODO: Remove STUB_USER_ID once @CurrentUser() + JwtAuthGuard are implemented
-const STUB_USER_ID = 'stub-user-id';
-
 @ApiTags('Sources')
 @ApiBearerAuth()
-// TODO: @UseGuards(JwtAuthGuard)
+// TODO [auth]: @UseGuards(JwtAuthGuard)
 @Controller('sources')
 export class SourceController {
   constructor(
@@ -57,31 +45,38 @@ export class SourceController {
 
   @ApiOperation({ summary: 'Create a new source' })
   @Post()
-  async create(@Body() dto: CreateSourceDto): Promise<SourceResponseDto> {
-    // TODO: replace STUB_USER_ID with userId from @CurrentUser()
-    // TODO: return this.createSource.execute(dto, userId)
-    return this.createSource.execute(dto, STUB_USER_ID);
+  async create(
+    @Body() dto: CreateSourceDto,
+    @CurrentUser() userId: string,
+  ): Promise<SourceResponseDto> {
+    return this.createSource.execute(dto, userId);
   }
 
   @ApiOperation({ summary: 'List my sources' })
   @Get()
-  async list(@Query() dto: ListSourcesDto): Promise<PaginatedSourcesResponseDto> {
-    // TODO: return this.listSources.execute(userId, dto)
-    throw new Error('Not implemented');
+  async list(
+    @Query() dto: ListSourcesDto,
+    @CurrentUser() userId: string,
+  ): Promise<PaginatedSourcesResponseDto> {
+    return this.listSources.execute(userId, dto);
   }
 
   @ApiOperation({ summary: 'Get source by ID' })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<SourceResponseDto> {
-    // TODO: return this.getSource.execute(id, userId)
-    throw new Error('Not implemented');
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() userId: string,
+  ): Promise<SourceResponseDto> {
+    return this.getSource.execute(id, userId);
   }
 
   @ApiOperation({ summary: 'Delete a source' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string): Promise<void> {
-    // TODO: return this.deleteSource.execute(id, userId)
-    throw new Error('Not implemented');
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() userId: string,
+  ): Promise<void> {
+    return this.deleteSource.execute(id, userId);
   }
 }

@@ -2,6 +2,9 @@
   "name": "book-summary-api",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",
@@ -14,7 +17,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:migrate:create": "prisma migrate dev --create-only",
-    "db:migration:deploy": "prisma migrate deploy"
+    "db:migration:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -39,6 +43,7 @@
     "@types/supertest": "^7.2.0",
     "prisma": "^5.0.0",
     "ts-jest": "^29.0.0",
+    "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
   }
 }

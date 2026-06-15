@@ -8,17 +8,14 @@ export class QuestionAttempt {
   ) {}
 
   wasAnswered(): boolean {
-    // TODO: return true when selectedOptionId is not null
-    throw new Error('Not implemented');
+    return this.selectedOptionId !== null;
   }
 
   wasSkipped(): boolean {
-    // TODO: return true when selectedOptionId is null
-    throw new Error('Not implemented');
+    return this.selectedOptionId === null;
   }
 
   isGraded(): boolean {
-    // TODO: return true when isCorrect is not null
-    throw new Error('Not implemented');
+    return this.isCorrect !== null;
   }
 }

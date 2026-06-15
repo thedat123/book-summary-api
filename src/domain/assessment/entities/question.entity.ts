@@ -13,27 +13,22 @@ export class Question {
   ) {}
 
   getCorrectOption(): QuestionOption | undefined {
-    // TODO: find the first option where isCorrect === true
-    throw new Error('Not implemented');
+    return this.options.find(option => option.isCorrectOption());
   }
 
   isOptionCorrect(optionId: string): boolean {
-    // TODO: find option by id, return option?.isCorrect === true
-    throw new Error('Not implemented');
+    return this.options.some(option => option.id === optionId && option.isCorrectOption());
   }
 
   hasEnoughOptions(min = 2): boolean {
-    // TODO: return true when options.length >= min
-    throw new Error('Not implemented');
+    return this.options.length >= min;
   }
 
   hasExactlyOneCorrectOption(): boolean {
-    // TODO: filter options where isCorrect === true, return true when count === 1
-    throw new Error('Not implemented');
+    return this.options.filter(option => option.isCorrectOption()).length === 1;
   }
 
   isLinkedToConcept(): boolean {
-    // TODO: return true when conceptId is not null
-    throw new Error('Not implemented');
+    return this.conceptId !== null;
   }
 }

@@ -1,17 +1,20 @@
-import { Controller, Get, Post, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ExtractConceptsUseCase } from '@application/concept/use-cases/extract-concepts.use-case';
 import { GetConceptsUseCase } from '@application/concept/use-cases/get-concepts.use-case';
 import { ConceptListResponseDto } from '@application/concept/dtos/concept-response.dto';
+import { CurrentUser } from '@presentation/decorators/current-user.decorator';
 
 /**
  * ConceptController — Presentation Layer
  * Route prefix: /sources/:sourceId/concepts
+ *
+ * Auth status: Using @CurrentUser() with guest fallback (no JWT guard yet).
+ * To activate real auth: uncomment @UseGuards(JwtAuthGuard) — see .ai/auth-guide.md
  */
 @ApiTags('Concepts')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
-// @UseGuards(JwtAuthGuard)
+// TODO [auth]: @UseGuards(JwtAuthGuard)
 @Controller('sources/:sourceId/concepts')
 export class ConceptController {
   constructor(
@@ -23,19 +26,17 @@ export class ConceptController {
   @Get()
   async findAll(
     @Param('sourceId') sourceId: string,
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<ConceptListResponseDto> {
-    // TODO: return this.getConcepts.execute(sourceId, userId);
-    throw new Error('Not implemented');
+    return this.getConcepts.execute(sourceId, userId);
   }
 
-  @ApiOperation({ summary: 'Extract concepts from source (AI)' })
+  @ApiOperation({ summary: 'Extract concepts from source using AI' })
   @Post('extract')
   async extract(
     @Param('sourceId') sourceId: string,
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<ConceptListResponseDto> {
-    // TODO: return this.extractConcepts.execute(sourceId, userId);
-    throw new Error('Not implemented');
+    return this.extractConcepts.execute(sourceId, userId);
   }
 }

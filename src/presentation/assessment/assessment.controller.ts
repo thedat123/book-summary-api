@@ -5,14 +5,18 @@ import { SubmitAssessmentUseCase } from '@application/assessment/use-cases/submi
 import { CreateAssessmentDto } from '@application/assessment/dtos/create-assessment.dto';
 import { SubmitAssessmentDto } from '@application/assessment/dtos/submit-assessment.dto';
 import { AssessmentResponseDto } from '@application/assessment/dtos/assessment-response.dto';
+import { CurrentUser } from '@presentation/decorators/current-user.decorator';
 
 /**
  * AssessmentController — Presentation Layer
- * Route prefix: /api/v1/assessments
+ * Route prefix: /assessments
+ *
+ * Auth status: Using @CurrentUser() with guest fallback (no JWT guard yet).
+ * To activate real auth: uncomment @UseGuards(JwtAuthGuard) — see .ai/auth-guide.md
  */
 @ApiTags('Assessments')
 @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard)
+// TODO [auth]: @UseGuards(JwtAuthGuard)
 @Controller('assessments')
 export class AssessmentController {
   constructor(
@@ -20,14 +24,13 @@ export class AssessmentController {
     private readonly submitAssessment: SubmitAssessmentUseCase,
   ) {}
 
-  @ApiOperation({ summary: 'Create a new assessment' })
+  @ApiOperation({ summary: 'Create a new assessment for a source' })
   @Post()
   async create(
     @Body() dto: CreateAssessmentDto,
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<AssessmentResponseDto> {
-    // TODO: return this.createAssessment.execute(dto, userId);
-    throw new Error('Not implemented');
+    return this.createAssessment.execute(dto, userId);
   }
 
   @ApiOperation({ summary: 'Submit assessment answers' })
@@ -35,18 +38,19 @@ export class AssessmentController {
   async submit(
     @Param('id') id: string,
     @Body() dto: SubmitAssessmentDto,
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<AssessmentResponseDto> {
-    // TODO: return this.submitAssessment.execute({ ...dto, assessmentId: id }, userId);
-    throw new Error('Not implemented');
+    return this.submitAssessment.execute({ ...dto, assessmentId: id }, userId);
   }
 
   @ApiOperation({ summary: 'Get all my assessments' })
   @Get()
   async findAll(
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<AssessmentResponseDto[]> {
-    // TODO
+    // TODO: implement GetAssessmentsUseCase — list assessment attempts by userId
+    // File to create: src/application/assessment/use-cases/get-assessments.use-case.ts
+    void userId;
     throw new Error('Not implemented');
   }
 
@@ -54,9 +58,11 @@ export class AssessmentController {
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-    // @CurrentUser() userId: string,
+    @CurrentUser() userId: string,
   ): Promise<AssessmentResponseDto> {
-    // TODO
+    // TODO: implement GetAssessmentByIdUseCase — load attempt + ownership check
+    // File to create: src/application/assessment/use-cases/get-assessment.use-case.ts
+    void id; void userId;
     throw new Error('Not implemented');
   }
 }

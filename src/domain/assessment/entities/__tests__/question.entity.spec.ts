@@ -9,8 +9,11 @@ const makeQuestion = (options: QuestionOption[], conceptId: string | null = null
 
 describe('Question entity (assessment domain)', () => {
   describe('getCorrectOption()', () => {
-    // TODO: returns the option where isCorrect is true
-    // TODO: returns undefined when no correct option exists
+    expect(makeQuestion([makeOption('opt-1', false), makeOption('opt-2', true), makeOption('opt-3', false)]).getCorrectOption())
+      .toEqual(makeOption('opt-2', true));
+
+    expect(makeQuestion([makeOption('opt-1', false), makeOption('opt-2', false)]).getCorrectOption())
+      .toBeUndefined();
   });
 
   describe('isOptionCorrect()', () => {

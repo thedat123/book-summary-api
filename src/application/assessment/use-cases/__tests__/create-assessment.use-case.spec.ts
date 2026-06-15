@@ -1,6 +1,7 @@
 import { CreateAssessmentUseCase } from '../create-assessment.use-case';
 import { IAssessmentRepository } from '@domain/assessment/repositories/assessment.repository.interface';
 import { Assessment } from '@domain/assessment/entities/assessment.entity';
+import { AssessmentStatus } from '@domain/assessment/value-objects/assessment-status.vo';
 
 describe('CreateAssessmentUseCase', () => {
   let useCase: CreateAssessmentUseCase;
@@ -19,7 +20,7 @@ describe('CreateAssessmentUseCase', () => {
   });
 
   it('creates an Assessment and returns a DTO with the given title', async () => {
-    const savedAssessment = new Assessment('assess-1', 'source-1', 'Chapter 1 Assessment', new Date());
+    const savedAssessment = new Assessment('assess-1', 'source-1', 'Chapter 1 Assessment', new Date(), AssessmentStatus.IN_PROGRESS);
     assessmentRepository.save.mockResolvedValue(savedAssessment);
 
     const result = await useCase.execute(
@@ -33,7 +34,7 @@ describe('CreateAssessmentUseCase', () => {
   });
 
   it('creates an Assessment with a null title when none provided', async () => {
-    const savedAssessment = new Assessment('assess-2', 'source-1', null, new Date());
+    const savedAssessment = new Assessment('assess-2', 'source-1', null, new Date(), AssessmentStatus.IN_PROGRESS);
     assessmentRepository.save.mockResolvedValue(savedAssessment);
 
     const result = await useCase.execute({ sourceId: 'source-1' }, 'user-1');
@@ -43,7 +44,7 @@ describe('CreateAssessmentUseCase', () => {
   });
 
   it('never exposes internal entity methods on the DTO', async () => {
-    const savedAssessment = new Assessment('assess-1', 'source-1', 'Test', new Date());
+    const savedAssessment = new Assessment('assess-1', 'source-1', 'Test', new Date(), AssessmentStatus.IN_PROGRESS);
     assessmentRepository.save.mockResolvedValue(savedAssessment);
 
     const result = await useCase.execute({ sourceId: 'source-1', title: 'Test' }, 'user-1');

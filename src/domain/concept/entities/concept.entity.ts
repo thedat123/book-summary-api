@@ -9,12 +9,10 @@ export class Concept {
   ) {}
 
   isHighImportance(threshold = 0.7): boolean {
-    // TODO: return true when importanceScore is not null AND >= threshold
-    throw new Error('Not implemented');
+    return this.importanceScore !== null && this.importanceScore >= threshold;
   }
 
   hasDescription(): boolean {
-    // TODO: return true when description.trim() has length > 0
-    throw new Error('Not implemented');
+    return this.description.trim().length > 0;
   }
 }

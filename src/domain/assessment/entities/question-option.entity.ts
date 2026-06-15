@@ -7,12 +7,10 @@ export class QuestionOption {
   ) {}
 
   isCorrectOption(): boolean {
-    // TODO: return true only when isCorrect === true (not null, not false)
-    throw new Error('Not implemented');
+    return this.isCorrect === true
   }
 
   hasContent(): boolean {
-    // TODO: return true when content is not null AND content.trim().length > 0
-    throw new Error('Not implemented');
+    return this.content !== null && this.content.trim().length > 0;
   }
 }
